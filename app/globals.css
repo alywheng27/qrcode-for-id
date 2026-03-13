@@ -181,6 +181,6 @@ body {
   }
 
   .terminal-button {
-    @apply bg-[#33ff00] text-[#0a0a0a] border border-[#33ff00] hover:shadow-lg hover:shadow-[#33ff00]/30 transition-all;
+    @apply bg-[#0fe76f] text-[#0a0a0a] border border-[#33ff00] hover:shadow-lg hover:shadow-[#33ff00]/30 transition-all;
   }
 }

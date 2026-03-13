@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { PeopleList, type Person } from "@/components/PeopleList";
-import { QRDisplay } from "@/components/QRDisplay";
+import { PeopleList, type Person } from "@/app/components/PeopleList";
+import { QRDisplay } from "@/app/components/QRDisplay";
 
 export default function Home() {
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   return (
-    <main className="h-screen bg-[#0a0a0a] text-[#33ff00] flex flex-col md:flex-row">
+    <main className="h-screen bg-[#0a0a0a] text-[#0fe76f] flex flex-col md:flex-row">
       {/* Header */}
       <div className="border-b md:border-b-0 md:border-r border-[#333333] p-4 md:hidden">
         <h1 className="text-xl font-bold glow-text font-mono">
@@ -31,7 +31,7 @@ export default function Home() {
         </div>
         <PeopleList
           onSelectPerson={setSelectedPerson}
-          selectedPersonId={selectedPerson?.id}
+          selectedPersonId={selectedPerson?.EmployeeID}
         />
       </div>
 
