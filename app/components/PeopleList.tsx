@@ -2,6 +2,7 @@
 
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import useDebounce from "../hooks/useDebounce";
 
 export interface Person {
   EmployeeID: string;
@@ -34,15 +35,17 @@ export function PeopleList({
   }, [fetchEmployees]);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const debounceSearchQuery = useDebounce(searchQuery, 500);
 
   const filteredPeople = useMemo(() => {
     return employees.filter(
       (person) =>
         person.NameOfEmployee.toLowerCase().includes(
-          searchQuery.toLowerCase(),
-        ) || person.Office.toLowerCase().includes(searchQuery.toLowerCase()),
+          debounceSearchQuery.toLowerCase(),
+        ) ||
+        person.Office.toLowerCase().includes(debounceSearchQuery.toLowerCase()),
     );
-  }, [employees, searchQuery]);
+  }, [employees, debounceSearchQuery]);
 
   return (
     <div className="h-full flex flex-col">
