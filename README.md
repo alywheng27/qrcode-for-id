@@ -1,36 +1,86 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# QR Code for ID
 
-## Getting Started
+A Next.js app that loads personnel from Microsoft SQL Server and generates downloadable QR codes with each person’s name and office. The UI uses a terminal-inspired dark theme (monospace typography, green accents, glow effects).
 
-First, run the development server:
+## Features
+
+### Data and API
+
+- **Employee directory from SQL Server** — Personnel are loaded from your database via `GET /api/employee`.
+- **Joined office names** — The API returns `EmployeeID`, `NameOfEmployee`, and `Office` by joining the `Employees` and `Office` tables (`Employees.OfficeID` → `Office.OfficeID`).
+
+### Personnel list (sidebar)
+
+- **Live search** — Filter people by **employee name** or **office** (case-insensitive substring match).
+- **Debounced search** — Typing is debounced (500 ms) so filtering stays smooth while you type.
+- **Scrollable list** — Long directories stay usable inside a scrollable panel.
+- **Selection state** — The active person is highlighted (left accent border and background); others show hover feedback.
+- **Empty search results** — Shows a clear “no results found” message when nothing matches.
+
+### QR code panel
+
+- **Select-to-generate** — Choose a person from the list to render their QR code on a canvas.
+- **Encoded payload** — The QR contains two lines of text: `Name: …` and `Office: …` for the selected employee.
+- **High error correction** — Codes use error correction level **H** for better durability when printed or scanned in poor conditions.
+- **Fixed visual size** — QR is drawn at **256×256** pixels with a small quiet zone (**margin: 2** modules), black modules on white.
+- **Loading state** — While the canvas is being generated, the QR area avoids showing a half-drawn frame.
+- **Download PNG** — Save the QR as a **PNG**; the file name uses the employee’s name (spaces → underscores) plus `_QR.png`.
+- **Download JPEG** — Same behavior for **JPG** export.
+- **Empty state** — If nobody is selected, the main area prompts you to pick someone from the list.
+
+### Layout and UX
+
+- **Responsive shell** — On small screens, the title appears above the list; on **md+**, a fixed-width sidebar holds branding + personnel, and the QR area fills the rest of the viewport.
+- **Terminal styling** — Custom “terminal” buttons and inputs, glow text/borders, and monospace cues consistent with a CLI aesthetic.
+
+## Requirements
+
+- **Node.js** (compatible with Next.js 16)
+- **Microsoft SQL Server** reachable from the app, with `Employees` and `Office` tables as used by the API query
+
+## Environment variables
+
+Create a `.env.local` (or configure your host) with:
+
+| Variable | Description |
+|----------|-------------|
+| `MSSQL_USER` | SQL login user |
+| `MSSQL_PASSWORD` | SQL login password |
+| `MSSQL_SERVER` | Hostname or IP of the SQL Server instance |
+| `MSSQL_DATABASE` | Database name containing `Employees` and `Office` |
+
+The connection uses `encrypt: false` and `trustServerCertificate: true` (suited for typical local/trusted-network setups). Adjust in `lib/db.ts` if your environment requires stricter TLS.
+
+## Getting started
+
+Install dependencies and run the dev server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Development server |
+| `npm run build` | Production build |
+| `npm run start` | Run production server |
+| `npm run lint` | Biome check |
+| `npm run format` | Biome format (write) |
 
-## Learn More
+## Tech stack
 
-To learn more about Next.js, take a look at the following resources:
+- [Next.js](https://nextjs.org) (App Router), React 19, TypeScript
+- [Tailwind CSS](https://tailwindcss.com) v4, shadcn/tailwind primitives
+- [mssql](https://www.npmjs.com/package/mssql) for SQL Server access
+- [qrcode](https://www.npmjs.com/package/qrcode) for canvas-based QR generation
+- [Lucide React](https://lucide.dev) for icons
+- [Biome](https://biomejs.dev) for linting and formatting
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+You can deploy on [Vercel](https://vercel.com) or any Node host that can reach your SQL Server. Ensure all `MSSQL_*` variables are set in the deployment environment and that the database allows connections from that network.

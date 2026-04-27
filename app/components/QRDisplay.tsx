@@ -21,24 +21,50 @@ export function QRDisplay({ person }: QRDisplayProps) {
   useEffect(() => {
     if (!person || !canvasRef.current) return;
 
+    const canvas = canvasRef.current;
+
     setIsGenerating(true);
     QRCode.toCanvas(
-      canvasRef.current,
+      canvas,
       generateQRValue(),
       {
-        width: 256,
-        margin: 2,
+        // width: 256,
+        width: 320,
+        margin: 4,
+        // version: 6,
         color: {
           dark: "#000000",
           light: "#ffffff",
         },
         errorCorrectionLevel: "H",
+        // errorCorrectionLevel: "M",
+        // errorCorrectionLevel: "H",
       },
       (error: Error | null | undefined) => {
         if (error) console.error("Error generating QR code:", error);
         setIsGenerating(false);
       },
     );
+
+    const ctx = canvas?.getContext("2d");
+    if (!ctx) return;
+
+    const logo = new Image();
+    logo.src = "/images/encrypted_logo.png"; // place logo in public folder
+
+    logo.onload = () => {
+      const logoSize = 100; // adjust size
+      const x = (canvas.width - logoSize) / 2;
+      const y = (canvas.height - logoSize) / 2;
+
+      // optional white background behind logo
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(x - 5, y, logoSize + 10, logoSize);
+      // ctx.fillRect(x - 5, y - 3, logoSize + 10, logoSize + 10);
+
+      // draw logo
+      ctx.drawImage(logo, x, y, logoSize, logoSize);
+    };
   }, [person, generateQRValue]);
 
   const downloadQR = async (format: "png" | "jpg") => {
