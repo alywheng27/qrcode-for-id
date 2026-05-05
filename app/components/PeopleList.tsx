@@ -28,6 +28,8 @@ export function PeopleList({
     });
     const employeesList = await data.json();
     setEmployees(employeesList);
+
+    console.log("[FUNCTION] fetchEmployees");
   }, []);
 
   useEffect(() => {
@@ -38,6 +40,7 @@ export function PeopleList({
   const debounceSearchQuery = useDebounce(searchQuery, 500);
 
   const filteredPeople = useMemo(() => {
+    console.log("[FUNCTION] filteredPeople");
     return employees.filter(
       (person) =>
         person.NameOfEmployee.toLowerCase().includes(

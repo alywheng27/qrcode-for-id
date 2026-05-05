@@ -68,6 +68,7 @@ export function QRDisplay({ person }: QRDisplayProps) {
   }, [person, generateQRValue]);
 
   const downloadQR = async (format: "png" | "jpg") => {
+    console.log("[FUNCTION] downloadQR");
     if (!canvasRef.current || !person) return;
 
     try {
